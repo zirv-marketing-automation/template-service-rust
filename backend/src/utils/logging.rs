@@ -1,7 +1,7 @@
 use tracing::subscriber::set_global_default;
 use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
 use tracing_log::LogTracer;
-use tracing_subscriber::{layer::SubscriberExt, EnvFilter, Registry};
+use tracing_subscriber::{EnvFilter, Registry, layer::SubscriberExt};
 
 /// Initialize the logging system based on configuration
 ///
@@ -18,16 +18,14 @@ pub fn init_logging(
     LogTracer::init()?;
 
     // Set up the env filter
-    let env_filter = EnvFilter::try_from_default_env()
-        .unwrap_or_else(|_| EnvFilter::new(log_level));
+    let env_filter =
+        EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new(log_level));
 
     match log_format {
         | "json" => {
             // JSON format for Kibana
-            let formatting_layer = BunyanFormattingLayer::new(
-                service_name.to_string(),
-                std::io::stdout,
-            );
+            let formatting_layer =
+                BunyanFormattingLayer::new(service_name.to_string(), std::io::stdout);
 
             let subscriber = Registry::default()
                 .with(env_filter)
@@ -35,15 +33,15 @@ pub fn init_logging(
                 .with(formatting_layer);
 
             set_global_default(subscriber)?;
-        },
-        | "pretty" | _ => {
-            // Pretty format for development/debugging
+        }
+        | _ => {
+            // Pretty format for development/debugging (default for any non-json value)
             let subscriber = Registry::default()
                 .with(env_filter)
                 .with(tracing_subscriber::fmt::layer());
 
             set_global_default(subscriber)?;
-        },
+        }
     }
 
     // Log initialization info

@@ -1,7 +1,7 @@
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, web};
-use config::register_configs;
 use config::LoggingConfig;
+use config::register_configs;
 use controllers::base::{health_check, not_found};
 use utils::logging::init_logging;
 use zirv_config::read_config;
