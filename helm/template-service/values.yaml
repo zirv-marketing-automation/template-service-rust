@@ -1,0 +1,119 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/zirv-marketing-automation/template-service-rust
+  pullPolicy: IfNotPresent
+  tag: "main"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: template-service.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  - name: RUST_LOG
+    value: "info"
+  - name: APP_HOST
+    value: "0.0.0.0"
+  - name: APP_PORT
+    value: "3000"
+  - name: ENV
+    value: "production"
+
+# Database configuration
+database:
+  url: "mysql://root:password@mysql:3306/template_service"
+  # For production, use a secret instead
+  # existingSecret: "database-credentials"
+  # existingSecretKey: "database-url"
+
+# Development mode settings
+dev:
+  enabled: false
+  # Mount source code for hot reload
+  sourceMount:
+    enabled: false
+    hostPath: ""
+  # Use development image with cargo-watch
+  image:
+    repository: template-service-dev
+    tag: latest
+  # Additional resources for development
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+    requests:
+      cpu: 1000m
+      memory: 1Gi

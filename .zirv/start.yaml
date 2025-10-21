@@ -1,7 +1,70 @@
 name: "Start Development Environment"
-description: "Start a development environment"
+description: "Start a hot-reloadable development environment in Kubernetes"
 commands:
-  - - command: cd backend && watchexec -e rs -r cargo run --bin backend
-      description: "Change directory to the backend"
-      options:
-        interactive: true
+  - command: |
+      # Get the absolute path to the project root
+      PROJECT_ROOT=$(pwd)
+      echo "Project root: $PROJECT_ROOT"
+      
+      # Check if Docker is available
+      if ! command -v docker &> /dev/null; then
+        echo "Error: Docker is not installed or not in PATH"
+        exit 1
+      fi
+      
+      # Check if kubectl is available
+      if ! command -v kubectl &> /dev/null; then
+        echo "Error: kubectl is not installed or not in PATH"
+        exit 1
+      fi
+      
+      # Check if helm is available
+      if ! command -v helm &> /dev/null; then
+        echo "Error: Helm is not installed or not in PATH"
+        exit 1
+      fi
+      
+      # Check if a Kubernetes cluster is available
+      if ! kubectl cluster-info &> /dev/null; then
+        echo "Error: No Kubernetes cluster found. Please start a local cluster (e.g., minikube, kind, or Docker Desktop Kubernetes)"
+        exit 1
+      fi
+      
+      echo "Building development Docker image..."
+      docker build -f Dockerfile.dev -t template-service-dev:latest .
+      
+      # For local Kubernetes (minikube, kind), we need to load the image
+      # Detect the type of cluster
+      if kubectl config current-context | grep -q "minikube"; then
+        echo "Loading image into minikube..."
+        minikube image load template-service-dev:latest
+      elif kubectl config current-context | grep -q "kind"; then
+        echo "Loading image into kind..."
+        kind load docker-image template-service-dev:latest
+      else
+        echo "Using Docker Desktop or similar - image should be available"
+      fi
+      
+      # Create or update the Helm release with dev values
+      echo "Deploying to Kubernetes with Helm..."
+      helm upgrade --install template-service ./helm/template-service \
+        -f ./helm/template-service/values-dev.yaml \
+        --set dev.sourceMount.hostPath="$PROJECT_ROOT" \
+        --wait
+      
+      echo ""
+      echo "Deployment complete! The service is running in your Kubernetes cluster."
+      echo ""
+      echo "To access the service, run:"
+      echo "  kubectl port-forward svc/template-service 8080:80"
+      echo ""
+      echo "Then access the service at http://localhost:8080"
+      echo ""
+      echo "To view logs:"
+      echo "  kubectl logs -f deployment/template-service"
+      echo ""
+      echo "To stop the service:"
+      echo "  helm uninstall template-service"
+    description: "Build dev image and deploy to Kubernetes with hot reload"
+    options:
+      interactive: false

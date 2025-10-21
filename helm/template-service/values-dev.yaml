@@ -1,0 +1,38 @@
+# values-dev.yaml - Development configuration with hot reload enabled
+dev:
+  enabled: true
+  sourceMount:
+    enabled: true
+    # This will be set dynamically by the start script
+    hostPath: ""
+  image:
+    repository: template-service-dev
+    tag: latest
+
+# Disable probes in development as they can interfere with hot reload
+livenessProbe:
+  initialDelaySeconds: 300
+  periodSeconds: 30
+readinessProbe:
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+# Use local image in development
+image:
+  pullPolicy: Never
+
+# Development database (adjust as needed)
+database:
+  url: "mysql://root:password@mysql:3306/template_service"
+
+env:
+  - name: RUST_LOG
+    value: "debug"
+  - name: APP_HOST
+    value: "0.0.0.0"
+  - name: APP_PORT
+    value: "3000"
+  - name: ENV
+    value: "development"
+  - name: RUST_BACKTRACE
+    value: "1"
