@@ -36,3 +36,12 @@ env:
     value: "development"
   - name: RUST_BACKTRACE
     value: "1"
+  # Structured logging configuration - pretty format for development
+  - name: LOG_LEVEL
+    value: "debug"
+  - name: LOG_FORMAT
+    value: "pretty"  # Use pretty format for easier reading during development
+  - name: SERVICE_NAME
+    value: "template-service"
+  - name: ENVIRONMENT
+    value: "development"
