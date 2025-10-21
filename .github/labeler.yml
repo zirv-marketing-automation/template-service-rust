@@ -1,0 +1,26 @@
+# Configuration for automatic labeling of PRs based on file paths
+# https://github.com/actions/labeler
+
+'documentation':
+  - changed-files:
+    - any-glob-to-any-file: ['**/*.md', 'docs/**/*']
+
+'rust':
+  - changed-files:
+    - any-glob-to-any-file: ['**/*.rs', '**/Cargo.toml', '**/Cargo.lock']
+
+'docker':
+  - changed-files:
+    - any-glob-to-any-file: ['**/Dockerfile', '**/.dockerignore', '**/docker-compose*.yml']
+
+'ci-cd':
+  - changed-files:
+    - any-glob-to-any-file: ['.github/workflows/**/*', '.github/actions/**/*']
+
+'dependencies':
+  - changed-files:
+    - any-glob-to-any-file: ['**/Cargo.toml', '**/Cargo.lock']
+
+'backend':
+  - changed-files:
+    - any-glob-to-any-file: ['backend/**/*']
