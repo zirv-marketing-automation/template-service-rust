@@ -10,14 +10,12 @@ RUN apt-get update && apt-get install -y pkg-config libssl-dev && rm -rf /var/li
 # Copy manifests first for caching
 COPY Cargo.toml Cargo.lock ./
 COPY backend/Cargo.toml backend/Cargo.toml
-COPY shared/Cargo.toml shared/Cargo.toml
 
 # Pre-fetch dependencies
-RUN mkdir backend/src shared/src && \
+RUN mkdir backend/src && \
     echo 'fn main() {}' > backend/src/main.rs && \
-    echo '' > shared/src/lib.rs && \
     cargo build -p backend --release && \
-    rm -r backend/src shared/src
+    rm -r backend/src
 
 # Copy actual source
 COPY . .
