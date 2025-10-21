@@ -77,3 +77,6 @@ When contributing to this repository:
 4. Submit a pull request using the PR template
 5. Wait for CI checks to pass and address any issues
 6. Request review from maintainers
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
