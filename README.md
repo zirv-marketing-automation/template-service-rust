@@ -1,9 +1,14 @@
 # template-service-rust
+
+[![CI](https://github.com/zirv-marketing-automation/template-service-rust/actions/workflows/ci.yml/badge.svg)](https://github.com/zirv-marketing-automation/template-service-rust/actions/workflows/ci.yml)
+[![CD](https://github.com/zirv-marketing-automation/template-service-rust/actions/workflows/cd.yml/badge.svg)](https://github.com/zirv-marketing-automation/template-service-rust/actions/workflows/cd.yml)
+[![Security Audit](https://github.com/zirv-marketing-automation/template-service-rust/actions/workflows/ci.yml/badge.svg?event=schedule)](https://github.com/zirv-marketing-automation/template-service-rust/actions/workflows/ci.yml)
+
 Template used to create services
 
 ## CI/CD Pipelines
 
-This repository includes automated CI/CD pipelines using GitHub Actions:
+This repository includes automated CI/CD pipelines using GitHub Actions. For detailed documentation, see [.github/WORKFLOWS.md](.github/WORKFLOWS.md).
 
 ### Continuous Integration (CI)
 The CI pipeline runs on every push and pull request to `main`, `master`, or `develop` branches:
@@ -51,3 +56,24 @@ cargo test
 cargo fmt --check
 cargo clippy -- -D warnings
 ```
+
+## Additional Workflows
+
+This repository includes several automated workflows to improve code quality and collaboration:
+
+- **Auto-labeling**: PRs are automatically labeled based on changed files
+- **Dependency Review**: Security scanning of dependency changes in PRs
+- **Stale Management**: Automatic cleanup of inactive issues and PRs
+- **Release Automation**: Automatic release creation with version tags
+
+For more details, see [.github/WORKFLOWS.md](.github/WORKFLOWS.md).
+
+## Contributing
+
+When contributing to this repository:
+1. Create a feature branch from `develop`
+2. Make your changes following the coding standards
+3. Ensure all tests pass locally
+4. Submit a pull request using the PR template
+5. Wait for CI checks to pass and address any issues
+6. Request review from maintainers
