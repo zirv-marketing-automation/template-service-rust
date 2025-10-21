@@ -1,0 +1,7 @@
+name: "Start Development Environment"
+description: "Start a development environment"
+commands:
+  - - command: cd backend && watchexec -e rs -r cargo run --bin backend
+      description: "Change directory to the backend"
+      options:
+        interactive: true

@@ -1,0 +1,39 @@
+edition = "2021"
+style_edition = "2024"
+
+# ---- General layout ----
+max_width = 100
+use_small_heuristics = "Max"
+newline_style = "Unix"
+
+# ---- Imports ----
+imports_granularity = "Crate"
+group_imports = "StdExternalCrate"
+reorder_imports = true
+reorder_modules = true
+imports_layout = "HorizontalVertical"
+
+# ---- Comments ----
+wrap_comments = true
+comment_width = 100
+
+# ---- Function & expression formatting ----
+fn_single_line = false
+where_single_line = false
+chain_width = 60
+single_line_if_else_max_width = 50
+
+# ---- Structs, Enums, etc. ----
+struct_lit_single_line = false
+enum_discrim_align_threshold = 30
+
+# ---- Misc readability tweaks ----
+match_arm_leading_pipes = "Always"
+use_field_init_shorthand = true
+format_code_in_doc_comments = true
+normalize_doc_attributes = true
+
+# ---- Stability & reproducibility ----
+unstable_features = true
+merge_derives = true
+version = "Two"

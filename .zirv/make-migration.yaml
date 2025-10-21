@@ -1,0 +1,6 @@
+name: "Make Migration"
+description: "Create a new migration"
+params:
+  - "migration_name"
+commands:
+  - command: sqlx migrate add -r ${migration_name}

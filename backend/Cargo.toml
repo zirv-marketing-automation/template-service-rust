@@ -1,0 +1,46 @@
+[package]
+name = "backend"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# Actix Web
+actix-web = "4.11.0"
+actix-rt = "2.10.0"
+actix-cors = "0.7.1"
+
+# SQLx (with MySQL or Postgres or SQLite, choose features accordingly)
+sqlx = { version = "0.8.5", features = ["runtime-tokio-native-tls", "mysql", "macros", "time"] }
+
+# For environment variable loading
+dotenvy = "0.15.7"
+envy = "0.4.2"
+
+# (Optional) for typed validations, if you like
+serde = { version = "1.0.218", features = ["derive"] }
+serde_json = "1.0.139"
+
+# Cron scheduling
+tokio-cron-scheduler = "0.14.0"
+tokio = { version = "1", features = ["macros", "rt", "time"] }
+
+# For logging
+env_logger = "0.11.7"
+log = "0.4.26"
+
+# Chrono for date-time parsing
+time = { version="0.3.37", features=["serde"] }
+
+# Uuid for generating unique identifiers
+uuid = "1.16.0"
+
+# Fast HashMap for better performance
+hashbrown = { version = "0.15.3", features = ["serde"] }
+
+# zirv crates
+zirv-macros = "0.1.2"
+zirv-db-sqlx = "0.2.2"
+zirv-config = "0.2.1"
+
+[dev-dependencies]
+serial_test = "2.0"

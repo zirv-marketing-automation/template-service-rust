@@ -1,0 +1,5 @@
+shortcuts:
+  e: example.yaml
+  mm: make-migration.yaml
+  gc: commit.yaml
+  s: start.yaml

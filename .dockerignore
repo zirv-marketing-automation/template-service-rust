@@ -1,0 +1,5 @@
+# Ignore build artifacts
+/target
+/node_modules
+**/*.log
+.env
