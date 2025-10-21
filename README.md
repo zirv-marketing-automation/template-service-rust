@@ -40,22 +40,94 @@ Automated release creation:
 ### Prerequisites
 - Rust 1.90.0 or later
 - Docker (for containerization)
+- Kubernetes cluster (for Helm deployment)
+- Helm 3.0+ (for Kubernetes deployment)
+- kubectl (for Kubernetes deployment)
 
-### Building
+### Local Development (without Kubernetes)
+
+#### Building
 ```bash
 cargo build --release
 ```
 
-### Running Tests
+#### Running Tests
 ```bash
 cargo test
 ```
 
-### Linting
+#### Linting
 ```bash
 cargo fmt --check
 cargo clippy -- -D warnings
 ```
+
+### Development with Hot Reload in Kubernetes
+
+This project supports hot-reloadable development in a Kubernetes cluster using Helm:
+
+```bash
+# Using zirv (if available)
+zirv start
+
+# Or manually with Helm
+docker build -f Dockerfile.dev -t template-service-dev:latest .
+helm upgrade --install template-service ./helm/template-service \
+  -f ./helm/template-service/values-dev.yaml \
+  --set dev.sourceMount.hostPath="$(pwd)"
+```
+
+The hot reload setup:
+- Builds a development Docker image with `cargo-watch`
+- Deploys to your local Kubernetes cluster
+- Mounts your source code as a volume
+- Automatically rebuilds and restarts when code changes
+
+Access the service:
+```bash
+kubectl port-forward svc/template-service 8080:80
+```
+
+Then visit http://localhost:8080
+
+To view logs:
+```bash
+kubectl logs -f deployment/template-service
+```
+
+To stop:
+```bash
+helm uninstall template-service
+```
+
+## Deployment
+
+### Kubernetes Deployment with Helm
+
+Production deployment to Kubernetes:
+
+```bash
+# Install
+helm install template-service ./helm/template-service
+
+# Upgrade
+helm upgrade template-service ./helm/template-service
+
+# Uninstall
+helm uninstall template-service
+```
+
+For comprehensive Kubernetes deployment documentation, including development with hot reload, troubleshooting, and best practices, see [KUBERNETES.md](KUBERNETES.md).
+
+For detailed Helm chart documentation, see [helm/template-service/README.md](helm/template-service/README.md).
+
+### Docker
+
+The project includes two Dockerfiles:
+- `Dockerfile`: Production build (multi-stage, optimized)
+- `Dockerfile.dev`: Development build with cargo-watch for hot reload
+
+Production images are automatically built and published to GitHub Container Registry (ghcr.io) via the CD pipeline.
 
 ## Additional Workflows
 
