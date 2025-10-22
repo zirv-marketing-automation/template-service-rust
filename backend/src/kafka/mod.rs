@@ -2,6 +2,7 @@
 
 pub mod config;
 pub mod consumer;
+pub mod examples;
 pub mod handler;
 pub mod manager;
 pub mod producer;
