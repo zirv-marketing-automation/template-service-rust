@@ -30,6 +30,46 @@ commands:
         exit 1
       fi
       
+      # Add Bitnami Helm repository if not already added
+      echo "Adding Bitnami Helm repository..."
+      helm repo add bitnami https://charts.bitnami.com/bitnami || true
+      helm repo update
+      
+      # Deploy Kafka with Zookeeper
+      echo "Deploying Kafka..."
+      helm upgrade --install kafka bitnami/kafka \
+        --set zookeeper.enabled=true \
+        --set replicaCount=1 \
+        --set persistence.enabled=false \
+        --set zookeeper.persistence.enabled=false \
+        --set logPersistence.enabled=false \
+        --set auth.clientProtocol=plaintext \
+        --set listeners.client.protocol=PLAINTEXT \
+        --set listeners.controller.protocol=PLAINTEXT \
+        --set listeners.interbroker.protocol=PLAINTEXT \
+        --set listeners.external.protocol=PLAINTEXT \
+        --wait --timeout=5m || echo "Kafka deployment had issues, continuing..."
+      
+      # Deploy Elasticsearch
+      echo "Deploying Elasticsearch..."
+      helm upgrade --install elasticsearch bitnami/elasticsearch \
+        --set master.replicaCount=1 \
+        --set data.replicaCount=1 \
+        --set coordinating.replicaCount=1 \
+        --set ingest.replicaCount=1 \
+        --set master.persistence.enabled=false \
+        --set data.persistence.enabled=false \
+        --set security.enabled=false \
+        --wait --timeout=5m || echo "Elasticsearch deployment had issues, continuing..."
+      
+      # Deploy Kibana
+      echo "Deploying Kibana..."
+      helm upgrade --install kibana bitnami/kibana \
+        --set elasticsearch.hosts[0]=elasticsearch \
+        --set elasticsearch.port=9200 \
+        --set persistence.enabled=false \
+        --wait --timeout=5m || echo "Kibana deployment had issues, continuing..."
+      
       echo "Building development Docker image..."
       docker build -f Dockerfile.dev -t template-service-dev:latest .
       
@@ -46,25 +86,39 @@ commands:
       fi
       
       # Create or update the Helm release with dev values
-      echo "Deploying to Kubernetes with Helm..."
+      echo "Deploying template-service to Kubernetes with Helm..."
       helm upgrade --install template-service ./helm/template-service \
         -f ./helm/template-service/values-dev.yaml \
         --set dev.sourceMount.hostPath="$PROJECT_ROOT" \
         --wait
       
       echo ""
-      echo "Deployment complete! The service is running in your Kubernetes cluster."
+      echo "=========================================="
+      echo "Deployment complete! Services are running:"
+      echo "=========================================="
       echo ""
-      echo "To access the service, run:"
+      echo "Template Service:"
       echo "  kubectl port-forward svc/template-service 8080:80"
+      echo "  Access at: http://localhost:8080"
       echo ""
-      echo "Then access the service at http://localhost:8080"
+      echo "Kafka:"
+      echo "  kubectl port-forward svc/kafka 9092:9092"
+      echo "  Broker: localhost:9092"
       echo ""
-      echo "To view logs:"
+      echo "Kibana:"
+      echo "  kubectl port-forward svc/kibana 5601:5601"
+      echo "  Access at: http://localhost:5601"
+      echo ""
+      echo "Elasticsearch:"
+      echo "  kubectl port-forward svc/elasticsearch 9200:9200"
+      echo "  Access at: http://localhost:9200"
+      echo ""
+      echo "To view template-service logs:"
       echo "  kubectl logs -f deployment/template-service"
       echo ""
-      echo "To stop the service:"
-      echo "  helm uninstall template-service"
+      echo "To stop all services:"
+      echo "  helm uninstall template-service kafka elasticsearch kibana"
+      echo "=========================================="
     description: "Build dev image and deploy to Kubernetes with hot reload"
     options:
       interactive: false

@@ -99,6 +99,15 @@ env:
     value: "template-service"
   - name: ENVIRONMENT
     value: "production"
+  # Kafka configuration
+  - name: KAFKA_BROKERS
+    value: "kafka:9092"
+  # Elasticsearch configuration
+  - name: ELASTICSEARCH_URL
+    value: "http://elasticsearch:9200"
+  # Kibana configuration
+  - name: KIBANA_URL
+    value: "http://kibana:5601"
 
 # Database configuration
 database:

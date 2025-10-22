@@ -86,14 +86,20 @@ helm upgrade template-service ./helm/template-service \
 
 ## Development Deployment with Hot Reload
 
-The development mode enables you to develop and test your code directly in Kubernetes with automatic reload on file changes.
+The development mode enables you to develop and test your code directly in Kubernetes with automatic reload on file changes. The development environment includes the complete infrastructure stack:
+
+- **Template Service**: The main application with hot reload capabilities
+- **Kafka**: Message broker with Zookeeper for event streaming
+- **Elasticsearch**: Log storage and search engine
+- **Kibana**: Web UI for log visualization and analysis
 
 ### How It Works
 
-1. **Development Image**: Uses `Dockerfile.dev` which includes `cargo-watch`
-2. **Volume Mount**: Mounts your local source code into the container
-3. **Auto Rebuild**: `cargo-watch` detects changes and rebuilds/restarts the application
-4. **Live Development**: Changes to your code are immediately reflected in the running container
+1. **Infrastructure Setup**: Deploys Kafka, Elasticsearch, and Kibana using Bitnami Helm charts
+2. **Development Image**: Uses `Dockerfile.dev` which includes `cargo-watch`
+3. **Volume Mount**: Mounts your local source code into the container
+4. **Auto Rebuild**: `cargo-watch` detects changes and rebuilds/restarts the application
+5. **Live Development**: Changes to your code are immediately reflected in the running container
 
 ### Quick Start with zirv
 
@@ -103,10 +109,14 @@ zirv start
 ```
 
 This automatically:
+- Adds the Bitnami Helm repository
+- Deploys Kafka with Zookeeper (single replica, no persistence for dev)
+- Deploys Elasticsearch (single node, no persistence for dev)
+- Deploys Kibana (connected to Elasticsearch)
 - Builds the development Docker image
-- Deploys to your Kubernetes cluster
+- Deploys the template service to your Kubernetes cluster
 - Sets up volume mounts for hot reload
-- Displays instructions for accessing the service
+- Displays instructions for accessing all services
 
 ### Manual Development Deployment
 
@@ -149,16 +159,35 @@ Running `target/debug/backend`
 Server running at http://0.0.0.0:3000
 ```
 
-## Accessing the Service
+## Accessing the Services
 
-### Port Forwarding
+### Port Forwarding (Development)
+
+In development mode, you'll have multiple services to access:
+
 ```bash
-# Forward to localhost:8080
+# Template Service
 kubectl port-forward svc/template-service 8080:80
 
-# Access at http://localhost:8080
-curl http://localhost:8080/health
+# Kafka
+kubectl port-forward svc/kafka 9092:9092
+
+# Kibana (for log visualization)
+kubectl port-forward svc/kibana 5601:5601
+
+# Elasticsearch (direct access if needed)
+kubectl port-forward svc/elasticsearch 9200:9200
 ```
+
+Service URLs:
+- **Template Service**: http://localhost:8080
+  - Health check: `curl http://localhost:8080/health`
+- **Kibana**: http://localhost:5601
+  - View and search application logs
+- **Elasticsearch**: http://localhost:9200
+  - Direct access to log storage
+- **Kafka**: localhost:9092
+  - Message broker for event streaming
 
 ### Ingress (Production)
 ```bash
@@ -301,12 +330,24 @@ autoscaling:
 
 ## Uninstalling
 
+### Remove Template Service Only
 ```bash
 # Remove the Helm release
 helm uninstall template-service
 
 # Verify removal
 kubectl get all -l app.kubernetes.io/name=template-service
+```
+
+### Remove All Development Services
+If you're using the full development environment with Kafka and Kibana:
+
+```bash
+# Remove all services
+helm uninstall template-service kafka elasticsearch kibana
+
+# Verify all resources are removed
+kubectl get all
 ```
 
 ## Troubleshooting

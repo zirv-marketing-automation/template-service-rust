@@ -76,10 +76,14 @@ cargo clippy -- -D warnings
 
 ### Development with Hot Reload in Kubernetes
 
-This project supports hot-reloadable development in a Kubernetes cluster using Helm:
+This project supports hot-reloadable development in a Kubernetes cluster using Helm. The development environment includes:
+- **Template Service**: The main application with hot reload
+- **Kafka**: Message broker with Zookeeper
+- **Elasticsearch**: Log storage and search
+- **Kibana**: Log visualization and analysis
 
 ```bash
-# Using zirv (if available)
+# Using zirv (if available) - Recommended
 zirv start
 
 # Or manually with Helm
@@ -91,25 +95,40 @@ helm upgrade --install template-service ./helm/template-service \
 
 The hot reload setup:
 - Builds a development Docker image with `cargo-watch`
-- Deploys to your local Kubernetes cluster
+- Deploys Kafka, Elasticsearch, and Kibana to your cluster
+- Deploys the template service to your local Kubernetes cluster
 - Mounts your source code as a volume
 - Automatically rebuilds and restarts when code changes
 
-Access the service:
+Access the services:
 ```bash
+# Template Service
 kubectl port-forward svc/template-service 8080:80
+
+# Kafka
+kubectl port-forward svc/kafka 9092:9092
+
+# Kibana
+kubectl port-forward svc/kibana 5601:5601
+
+# Elasticsearch
+kubectl port-forward svc/elasticsearch 9200:9200
 ```
 
-Then visit http://localhost:8080
+Service URLs:
+- Template Service: http://localhost:8080
+- Kibana: http://localhost:5601
+- Elasticsearch: http://localhost:9200
+- Kafka: localhost:9092
 
 To view logs:
 ```bash
 kubectl logs -f deployment/template-service
 ```
 
-To stop:
+To stop all services:
 ```bash
-helm uninstall template-service
+helm uninstall template-service kafka elasticsearch kibana
 ```
 
 ## Deployment
