@@ -1,7 +1,9 @@
 use actix_cors::Cors;
-use actix_web::{App, HttpServer, middleware::Logger, web};
+use actix_web::{App, HttpServer, web};
+use config::LoggingConfig;
 use config::register_configs;
 use controllers::base::{health_check, not_found};
+use utils::logging::init_logging;
 use zirv_config::read_config;
 use zirv_db_sqlx::{get_db_pool, init_db_pool};
 
@@ -16,22 +18,33 @@ mod utils;
 async fn main() -> std::io::Result<()> {
     register_configs();
 
-    env_logger::init();
+    // Initialize structured logging for Kibana
+    let logging_config = read_config!("logging", LoggingConfig).unwrap();
+    init_logging(
+        &logging_config.service_name,
+        &logging_config.environment,
+        &logging_config.level,
+        &logging_config.format,
+    )
+    .expect("Failed to initialize logging");
 
     init_db_pool!();
 
     let pool = get_db_pool!();
 
     // Migrate the database
+    tracing::info!("Running database migrations");
     sqlx::migrate!("../migrations")
         .run(pool)
         .await
         .expect("Failed to run migrations");
+    tracing::info!("Database migrations completed");
 
     // Seed the database
+    tracing::info!("Seeding database");
     match seeder::seed_database().await {
-        | Ok(_) => println!("Database seeded successfully."),
-        | Err(e) => eprintln!("Failed to seed database: {:?}", e),
+        | Ok(_) => tracing::info!("Database seeded successfully"),
+        | Err(e) => tracing::error!(error = ?e, "Failed to seed database"),
     };
 
     let host = read_config!("app.host", String).unwrap();
@@ -39,7 +52,7 @@ async fn main() -> std::io::Result<()> {
 
     // Start Actix Web Server
     let addr = format!("{}:{}", host, port);
-    println!("Server running at http://{}", addr);
+    tracing::info!(address = %addr, "Starting HTTP server");
 
     HttpServer::new(move || {
         // Configure CORS to allow only localhost
@@ -59,7 +72,7 @@ async fn main() -> std::io::Result<()> {
             .max_age(3600);
 
         App::new()
-            .wrap(Logger::default())
+            .wrap(tracing_actix_web::TracingLogger::default())
             .wrap(cors)
             .service(health_check)
             .service(router::get())

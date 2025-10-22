@@ -90,6 +90,15 @@ env:
     value: "3000"
   - name: ENV
     value: "production"
+  # Structured logging configuration for Kibana
+  - name: LOG_LEVEL
+    value: "info"
+  - name: LOG_FORMAT
+    value: "json"  # json for Kibana, pretty for development
+  - name: SERVICE_NAME
+    value: "template-service"
+  - name: ENVIRONMENT
+    value: "production"
 
 # Database configuration
 database:

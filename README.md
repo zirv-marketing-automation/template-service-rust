@@ -44,6 +44,18 @@ Automated release creation:
 - Helm 3.0+ (for Kubernetes deployment)
 - kubectl (for Kubernetes deployment)
 
+### Logging
+
+The service uses structured logging with JSON output for integration with Kibana. Logs include service name, environment, and contextual information for easy filtering and analysis.
+
+For detailed logging configuration and usage, see [LOGGING.md](LOGGING.md).
+
+**Quick configuration:**
+- `LOG_LEVEL`: Set logging level (trace, debug, info, warn, error)
+- `LOG_FORMAT`: Set format (`json` for Kibana, `pretty` for development)
+- `SERVICE_NAME`: Service identifier for log filtering
+- `ENVIRONMENT`: Environment name (production, staging, development)
+
 ### Local Development (without Kubernetes)
 
 #### Building

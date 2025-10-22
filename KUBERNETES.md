@@ -178,6 +178,18 @@ minikube service template-service --url
 
 ## Monitoring and Debugging
 
+### Structured Logging with Kibana
+
+The service outputs structured JSON logs that are automatically collected and sent to Kibana. Each log includes service name, environment, and contextual information.
+
+For detailed logging documentation, see [LOGGING.md](LOGGING.md).
+
+**Viewing logs in Kibana:**
+1. Access your Kibana dashboard
+2. Use the filter: `service_name: "template-service"`
+3. Filter by environment: `environment: "production"`
+4. Filter by log level (e.g., errors only): `level: 50`
+
 ### View Logs
 ```bash
 # Follow logs
@@ -233,7 +245,18 @@ env:
     value: "3000"
   - name: ENV
     value: "production"  # development, staging, production
+  # Logging configuration
+  - name: LOG_LEVEL
+    value: "info"  # Logging level
+  - name: LOG_FORMAT
+    value: "json"  # json for Kibana, pretty for development
+  - name: SERVICE_NAME
+    value: "template-service"  # Service identifier
+  - name: ENVIRONMENT
+    value: "production"  # Environment name for log filtering
 ```
+
+See [LOGGING.md](LOGGING.md) for detailed logging configuration.
 
 ### Database Configuration
 
