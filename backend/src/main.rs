@@ -9,6 +9,7 @@ use zirv_db_sqlx::{get_db_pool, init_db_pool};
 
 mod config;
 mod controllers;
+mod kafka;
 mod models;
 mod router;
 mod seeder;

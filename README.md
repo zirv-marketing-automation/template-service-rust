@@ -56,6 +56,23 @@ For detailed logging configuration and usage, see [LOGGING.md](LOGGING.md).
 - `SERVICE_NAME`: Service identifier for log filtering
 - `ENVIRONMENT`: Environment name (production, staging, development)
 
+### Kafka Integration
+
+The service includes a flexible Kafka module for consuming and producing messages. The module provides:
+- Easy configuration via environment variables
+- Topic-specific message handlers with custom logic
+- Support for consuming, skipping, or rejecting messages
+- Built-in producer for sending messages
+
+For detailed Kafka configuration and usage examples, see [backend/src/kafka/USAGE.md](backend/src/kafka/USAGE.md).
+
+**Quick configuration:**
+- `KAFKA_ENABLED`: Enable/disable Kafka functionality (default: false)
+- `KAFKA_BROKERS`: Kafka broker addresses (default: localhost:9092)
+- `KAFKA_CONSUMER_GROUP_ID`: Consumer group ID
+- `KAFKA_TOPICS`: Topics to consume from (comma-separated)
+- `KAFKA_AUTO_OFFSET_RESET`: Auto-offset reset strategy (earliest, latest, none)
+
 ### Local Development (without Kubernetes)
 
 #### Building

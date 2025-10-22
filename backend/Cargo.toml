@@ -46,5 +46,9 @@ zirv-macros = "0.1.2"
 zirv-db-sqlx = "0.2.2"
 zirv-config = "0.2.1"
 
+# Kafka
+rdkafka = { version = "0.36.2", features = ["tokio"] }
+async-trait = "0.1.77"
+
 [dev-dependencies]
 serial_test = "2.0"
