@@ -1,6 +1,11 @@
 [workspace]
+resolver = "2"
 members = [
-  "backend"
+  "backend",
+  "common",
+  "services/api",
+  "services/kafka",
+  "kafka-messages",
 ]
 
 [workspace.package]

@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  # API Service
+  api:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    container_name: template-api
+    ports:
+      - "3000:3000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3000
+      - LOG_LEVEL=info
+      - LOG_FORMAT=json
+      - SERVICE_NAME=template-api
+      - ENVIRONMENT=production
+      - DATABASE_URL=mysql://user:password@db:3306/template_db
+      - MAX_DATABASE_CONNECTIONS=5
+    depends_on:
+      - db
+    networks:
+      - template-network
+    restart: unless-stopped
+
+  # Kafka Consumer Service
+  kafka-consumer:
+    build:
+      context: .
+      dockerfile: services/kafka/Dockerfile
+    container_name: template-kafka-consumer
+    environment:
+      - LOG_LEVEL=info
+      - LOG_FORMAT=json
+      - SERVICE_NAME=template-kafka-consumer
+      - ENVIRONMENT=production
+      - KAFKA_BROKERS=kafka:9092
+      - KAFKA_GROUP_ID=template-service
+    depends_on:
+      - kafka
+    networks:
+      - template-network
+    restart: unless-stopped
+
+  # Database (MySQL example)
+  db:
+    image: mysql:8.0
+    container_name: template-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=template_db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - template-network
+    restart: unless-stopped
+
+  # Zookeeper for Kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: template-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - template-network
+    restart: unless-stopped
+
+  # Kafka
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: template-kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    depends_on:
+      - zookeeper
+    networks:
+      - template-network
+    restart: unless-stopped
+
+networks:
+  template-network:
+    driver: bridge
+
+volumes:
+  db-data:
