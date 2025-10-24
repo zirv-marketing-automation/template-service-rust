@@ -26,10 +26,13 @@ template-service-rust/
 │   │   ├── lib.rs
 │   │   └── messages.rs
 │   └── Cargo.toml
+├── backend/               # DEPRECATED: Legacy code, use services/api instead
 ├── migrations/            # Database migrations (shared)
 ├── docker-compose.yml     # Multi-service orchestration
 └── Cargo.toml            # Workspace configuration
 ```
+
+**Note:** The `backend/` directory is maintained for backward compatibility but is deprecated. New development should use `services/api/`.
 
 ## Services
 
