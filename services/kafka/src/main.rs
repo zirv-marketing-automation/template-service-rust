@@ -1,7 +1,7 @@
 use common::config::LoggingConfig;
 use common::logging::init_logging;
-use kafka_messages::messages::TemplateMessageHandler;
 use kafka_messages::MessageHandler;
+use kafka_messages::messages::TemplateMessageHandler;
 use std::sync::Arc;
 use tokio::signal;
 use zirv_config::{read_config, register_config};
@@ -40,7 +40,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // 1. Create KafkaConsumer with configuration
     // 2. Subscribe to topics from all handlers
     // 3. Poll for messages and dispatch to appropriate handler based on topic
-    // 
+    //
     // Example integration (requires zirv-kafka):
     // let kafka_config = read_config!("kafka", KafkaConfig).unwrap();
     // let consumer = KafkaConsumer::new(&kafka_config)?;
@@ -69,8 +69,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Wait for shutdown signal
     signal::ctrl_c().await?;
-    
+
     tracing::info!("Shutdown signal received, stopping kafka consumer");
-    
+
     Ok(())
 }

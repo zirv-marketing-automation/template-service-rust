@@ -8,7 +8,7 @@ pub mod messages;
 pub trait MessageHandler: Send + Sync {
     /// Handle the incoming message
     async fn handle(&self, payload: &str) -> Result<(), Box<dyn std::error::Error>>;
-    
+
     /// Get the topic this handler is responsible for
     fn topic(&self) -> &str;
 }

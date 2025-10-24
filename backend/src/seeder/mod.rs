@@ -107,12 +107,11 @@ pub async fn seed_database() -> Result<(), Box<dyn std::error::Error + Send + Sy
             match qb.build().execute(pool).await {
                 | Ok(_) => {}
                 | Err(e) => {
-                    if let Error::Database(db_err) = &e {
-                        if let Some(code) = db_err.code() {
-                            if code.starts_with("23") {
-                                return Ok(());
-                            }
-                        }
+                    if let Error::Database(db_err) = &e
+                        && let Some(code) = db_err.code()
+                        && code.starts_with("23")
+                    {
+                        return Ok(());
                     }
                     eprintln!("Skipping inserting into {}: {}", table_name, e);
                     return Ok(());

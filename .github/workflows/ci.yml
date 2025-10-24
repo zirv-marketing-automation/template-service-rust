@@ -100,7 +100,21 @@ jobs:
       - name: Build
         run: cargo build --release --verbose
 
-      - name: Upload build artifacts
+      - name: Upload API build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-binary
+          path: target/release/api
+          retention-days: 7
+
+      - name: Upload Kafka build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kafka-binary
+          path: target/release/kafka
+          retention-days: 7
+
+      - name: Upload Backend build artifact (legacy)
         uses: actions/upload-artifact@v4
         with:
           name: backend-binary
