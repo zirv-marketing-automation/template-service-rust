@@ -260,6 +260,43 @@ dependencies = [
 ]
 
 [[package]]
+name = "api"
+version = "0.1.0"
+dependencies = [
+ "actix-cors",
+ "actix-rt",
+ "actix-web",
+ "common",
+ "dotenvy",
+ "envy",
+ "hashbrown 0.15.5",
+ "serde",
+ "serde_json",
+ "serial_test",
+ "sqlx",
+ "time",
+ "tokio",
+ "tokio-cron-scheduler",
+ "tracing",
+ "tracing-actix-web",
+ "uuid",
+ "zirv-config",
+ "zirv-db-sqlx",
+ "zirv-macros",
+]
+
+[[package]]
+name = "async-trait"
+version = "0.1.89"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9035ad2d096bed7955a320ee7e2230574d28fd3c3a0f186cbea1ff3c7eed5dbb"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "atoi"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -409,6 +446,22 @@ dependencies = [
  "num-traits",
  "wasm-bindgen",
  "windows-link",
+]
+
+[[package]]
+name = "common"
+version = "0.1.0"
+dependencies = [
+ "dotenvy",
+ "envy",
+ "serde",
+ "serde_json",
+ "serial_test",
+ "tracing",
+ "tracing-bunyan-formatter",
+ "tracing-log 0.2.0",
+ "tracing-subscriber",
+ "zirv-config",
 ]
 
 [[package]]
@@ -1154,6 +1207,31 @@ checksum = "ec48937a97411dcb524a265206ccd4c90bb711fca92b2792c407f268825b9305"
 dependencies = [
  "once_cell",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "kafka"
+version = "0.1.0"
+dependencies = [
+ "common",
+ "dotenvy",
+ "kafka-messages",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "zirv-config",
+]
+
+[[package]]
+name = "kafka-messages"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
 ]
 
 [[package]]
